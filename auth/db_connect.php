@@ -2,7 +2,7 @@
 // Database connection details
 // In a real application, use environment variables for these
 $DB_HOST = getenv('DB_HOST') ?: 'localhost';
-$DB_NAME = getenv('DB_NAME') ?: 'waste_management_system';
+$DB_NAME = getenv('DB_NAME') ?: 'waster';
 $DB_USER = getenv('DB_USER') ?: 'root';
 $DB_PASS = getenv('DB_PASS') ?: ''; // Replace with your database password if any
 
