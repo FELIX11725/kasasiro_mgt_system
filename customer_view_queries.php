@@ -41,17 +41,6 @@ include 'include/sidebar.php';
 
     <div class="page-body">
         <div class="container-xl">
-            <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="alert alert-success" role="alert">
-                    <?php echo htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?>
-                </div>
-            <?php endif; ?>
-            <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php echo htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?>
-                </div>
-            <?php endif; ?>
-
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">My Submitted Queries</h3>
@@ -152,3 +141,40 @@ include 'include/sidebar.php';
 </div>
 
 <?php include 'include/footer.php'; ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const toastContainer = document.querySelector('.toast-container');
+
+    function showToast(message, type = 'danger') {
+        const toastId = 'toast-' + Date.now();
+        const toastHTML = `
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="toast-header">
+                    <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                    <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            </div>`;
+
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement);
+
+        toast.show();
+    }
+
+    <?php if (isset($_SESSION['error_message'])): ?>
+        showToast("<?php echo htmlspecialchars($_SESSION['error_message']); ?>", 'danger');
+        <?php unset($_SESSION['error_message']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['success_message'])): ?>
+        showToast("<?php echo htmlspecialchars($_SESSION['success_message']); ?>", 'success');
+        <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
+});
+</script>
