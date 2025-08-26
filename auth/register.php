@@ -116,29 +116,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>User Registration</title>
     <!-- You might want to link to your main CSS file here -->
     <link rel="stylesheet" href="../dist/css/tabler.min.css">
+    <script src="../dist/js/tabler.min.js"></script>
     <style>
         body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; }
         .container { background-color: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        .alert { margin-bottom: 1rem; }
     </style>
 </head>
 <body>
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <!-- Toasts will be appended here -->
+    </div>
+
     <div class="container">
         <h2 class="text-center mb-4">Register</h2>
 
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger" role="alert">
-                <?php foreach ($errors as $error): ?>
-                    <p class="mb-0"><?php echo htmlspecialchars($error); ?></p>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($success_message): ?>
-            <div class="alert alert-success" role="alert">
-                <?php echo $success_message; // Contains a link, so don't escape ?>
-            </div>
-        <?php else: // Hide form on success ?>
+        <?php if (empty($success_message)): // Hide form on success ?>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <div class="mb-3">
                     <label for="first_name" class="form-label">First Name:</label>
@@ -179,5 +171,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Already have an account? <a href="login.php">Login here</a>
         </p>
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toastContainer = document.querySelector('.toast-container');
+
+        function showToast(message, type = 'danger') {
+            const toastId = 'toast-' + Date.now();
+            const toastHTML = `
+                <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast-header">
+                        <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>`;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement);
+
+            toast.show();
+        }
+
+        <?php if (!empty($errors)): ?>
+            <?php foreach ($errors as $error): ?>
+                showToast("<?php echo htmlspecialchars($error); ?>", 'danger');
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if ($success_message): ?>
+            showToast("<?php echo $success_message; ?>", 'success');
+        <?php endif; ?>
+    });
+    </script>
 </body>
 </html>

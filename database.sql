@@ -138,3 +138,11 @@ CREATE TABLE Payments (
 
 -- Sample Data for Roles (optional, for initial setup)
 INSERT INTO Roles (role_name) VALUES ('admin'), ('customer'), ('driver'), ('staff');
+
+-- Sample User
+INSERT INTO Users (user_id, username, password, role_id, first_name, last_name, email, phone_number, address) VALUES
+(1, 'testuser', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 2, 'Test', 'User', 'test@example.com', '1234567890', '123 Test St');
+
+-- Sample Customer
+INSERT INTO Customers (customer_id, user_id, customer_identifier) VALUES
+(1, 1, 'CUST-00001');

@@ -74,23 +74,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Login</title>
     <link rel="stylesheet" href="../dist/css/tabler.min.css">
+    <script src="../dist/js/tabler.min.js"></script>
     <style>
         body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; }
         .container { background-color: #fff; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        .alert { margin-bottom: 1rem; }
     </style>
 </head>
 <body>
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <!-- Toasts will be appended here -->
+    </div>
+
     <div class="container">
         <h2 class="text-center mb-4">Login</h2>
-
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger" role="alert">
-                <?php foreach ($errors as $error): ?>
-                    <p class="mb-0"><?php echo htmlspecialchars($error); ?></p>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
 
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="mb-3">
@@ -107,5 +103,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Don't have an account? <a href="register.php">Register here</a>
         </p>
     </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toastContainer = document.querySelector('.toast-container');
+
+        function showToast(message, type = 'danger') {
+            const toastId = 'toast-' + Date.now();
+            const toastHTML = `
+                <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast-header">
+                        <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                        <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>`;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement);
+
+            toast.show();
+        }
+
+        <?php if (!empty($errors)): ?>
+            <?php foreach ($errors as $error): ?>
+                showToast("<?php echo htmlspecialchars($error); ?>", 'danger');
+            <?php endforeach; ?>
+        <?php endif; ?>
+    });
+    </script>
 </body>
 </html>

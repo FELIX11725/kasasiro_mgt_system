@@ -61,17 +61,6 @@ include 'include/sidebar.php';
 
     <div class="page-body">
         <div class="container-xl">
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php foreach ($errors as $error): ?><p class="mb-0"><?php echo htmlspecialchars($error); ?></p><?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-            <?php if ($success_message): ?>
-                <div class="alert alert-success" role="alert">
-                    <?php echo htmlspecialchars($success_message); ?>
-                </div>
-            <?php endif; ?>
-
             <?php if (!$success_message): // Hide form on success ?>
             <div class="card">
                 <div class="card-header">
@@ -99,3 +88,40 @@ include 'include/sidebar.php';
 </div>
 
 <?php include 'include/footer.php'; ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const toastContainer = document.querySelector('.toast-container');
+
+    function showToast(message, type = 'danger') {
+        const toastId = 'toast-' + Date.now();
+        const toastHTML = `
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="toast-header">
+                    <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                    <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            </div>`;
+
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement);
+
+        toast.show();
+    }
+
+    <?php if (!empty($errors)): ?>
+        <?php foreach ($errors as $error): ?>
+            showToast("<?php echo htmlspecialchars($error); ?>", 'danger');
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if ($success_message): ?>
+        showToast("<?php echo htmlspecialchars($success_message); ?>", 'success');
+    <?php endif; ?>
+});
+</script>
